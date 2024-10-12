@@ -1,6 +1,6 @@
 <template>
 
-  <div class="flex justify-center items-center h-[calc(512px-3rem)]">
+  <div class="flex justify-center items-center flex-grow mt-12">
     <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
 
       <h1 class="text-2xl font-bold mb-6 text-center">Login</h1>
