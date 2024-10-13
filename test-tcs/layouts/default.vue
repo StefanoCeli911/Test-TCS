@@ -3,7 +3,7 @@
     <!-- Navbar -->
     <header class="bg-gray-800 text-white p-4">
       <nav class="container mx-auto flex justify-between items-center">
-        <div class="text-lg font-bold">Top Consulting & Services</div>
+        <div class="text-lg font-bold"><NuxtLink to="/" class="cursor-pointer">Top Consulting & Services</NuxtLink></div>
 
          <!-- Icona hamburger mobile -->
          <div class="lg:hidden">
@@ -16,8 +16,11 @@
 
         <!-- Links desktop -->
         <ul class="hidden lg:flex space-x-4">
-          <li><NuxtLink to="/" class="hover:text-gray-400">Home</NuxtLink></li>
-          <li><NuxtLink to="/login" class="hover:text-gray-400">Login</NuxtLink></li>
+          <li><NuxtLink to="/" class="hover:text-slate-400">Home</NuxtLink></li>
+          <li v-if="isAuthenticated"><NuxtLink to="/products" class="hover:text-slate-400">Prodotti</NuxtLink></li>
+          <li v-if="isAuthenticated && userRole=='admin'"><NuxtLink to="/admin" class="hover:text-slate-400">Pannello Admin</NuxtLink></li>
+          <li class="text-center" v-if="isAuthenticated"><NuxtLink @click="logout" class="cursor-pointer hover:text-slate-400">Logout</NuxtLink></li>
+          <li v-if="!isAuthenticated"><NuxtLink to="/login" class="hover:text-slate-400">Login</NuxtLink></li>
         </ul>
       </nav>
 
@@ -27,7 +30,10 @@
           <div class="container mx-auto py-4">
             <ul class="space-y-4">
               <li class="text-center"><NuxtLink @click="toggleMenu" to="/" class="block text-lg hover:text-slate-400">Home</NuxtLink></li>
-              <li class="text-center"><NuxtLink @click="toggleMenu" to="/login" class="block text-lg hover:text-slate-400">Login</NuxtLink></li>
+              <li class="text-center" v-if="isAuthenticated"><NuxtLink @click="toggleMenu" to="/products" class="block text-lg hover:text-slate-400">Prodotti</NuxtLink></li>
+              <li class="text-center" v-if="isAuthenticated && userRole=='admin'"><NuxtLink @click="toggleMenu" to="/admin" class="block text-lg hover:text-slate-400">Pannello Admin</NuxtLink></li>
+              <li class="text-center" v-if="isAuthenticated"><NuxtLink @click="logout" class="cursor-pointer block text-lg hover:text-slate-400">Logout</NuxtLink></li>
+              <li class="text-center" v-if="!isAuthenticated"><NuxtLink @click="toggleMenu" to="/login" class="block text-lg hover:text-slate-400">Login</NuxtLink></li>
             </ul>
           </div>
         </div>
@@ -36,7 +42,7 @@
 
     <!-- Page Content -->
     <main class="flex-grow container mx-auto p-4">
-      <NuxtPage />
+      <NuxtPage  @login="handleLoginSuccess" />
     </main>
 
     <!-- Footer -->
@@ -50,6 +56,27 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { checkAuth } from '~/utils/func'
+
+const router = useRouter();
+const isAuthenticated = ref(false);
+const name = ref('');
+const userRole = ref('');
+
+onMounted(() => {
+  //Variabile per verificare se l'utente è loggato
+  isAuthenticated.value = checkAuth();
+
+  //Prendo dal local storage il ruolo e il name
+  const roleFromStorage = localStorage.getItem('role');
+  const userNameFromStorage = localStorage.getItem('name');
+
+  if(isAuthenticated){
+    userRole.value = roleFromStorage;
+    name.value = userNameFromStorage;
+  }
+})
 
 // Stato del menu
 const isMenuOpen = ref(false)
@@ -57,6 +84,30 @@ const isMenuOpen = ref(false)
 // Toggle menu
 const toggleMenu = () => {
   isMenuOpen.value = !isMenuOpen.value
+}
+
+const logout = () => {
+  // Rimuovi il token e il ruolo dal localStorage
+  localStorage.removeItem('token')
+  localStorage.removeItem('role')
+  localStorage.removeItem('username') // Se hai salvato anche il nome utente
+
+  // Aggiorna lo stato di autenticazione
+  isAuthenticated.value = false
+  userRole.value = ''
+  name.value = ''
+  
+  isMenuOpen.value = !isMenuOpen.value;
+
+  // Reindirizza a login
+  router.push('/login').catch(err => {
+  console.error('Errore nel reindirizzamento:', err);
+});
+}
+
+// Funzione per gestire l'evento di login
+const handleLoginSuccess = (authenticated) => {
+  isAuthenticated.value = authenticated;
 }
 </script>
 

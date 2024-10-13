@@ -42,16 +42,38 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { getUserProfile, checkAuth } from '~/utils/func'
 
-const email = ref('')
-const password = ref('')
-const router = useRouter()
+const email = ref('');
+const password = ref('');
+const router = useRouter();
+
+const emit = defineEmits();
 
 const handleLogin = async () => {
-  // Qui inserirai la logica di autenticazione con JWT
-  console.log('Esegui il login')
+  try {
+    const response = await $fetch('https://api.escuelajs.co/api/v1/auth/login', {
+      method: 'POST',
+      body: {
+        email: email.value,
+        password: password.value
+      }
+    })
+    
+    // Salva il token JWT in localStorage
+    localStorage.setItem('token', response.access_token);
 
-  // Simuliamo una risposta corretta e reindirizziamo alla pagina admin
-  await router.push('/admin')
+    // Dopo aver ottenuto il token, chiama la funzione per ottenere il profilo utente
+    await getUserProfile(response.access_token);
+
+    //Creo un emit per aggiornare la variabile in default.vue
+    emit('login', true);
+
+    // Reindirizza alla pagina prodotti dopo il login
+    router.push('/products');
+
+  } catch (error) {
+    console.error('Login fallito:', error)
+  }
 }
 </script>
