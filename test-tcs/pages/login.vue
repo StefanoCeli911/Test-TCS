@@ -1,7 +1,9 @@
 <template>
 
   <div class="flex justify-center items-center flex-grow mt-12">
-    <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+    <Loader v-if="isLoading" />
+
+    <div v-else class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
 
       <h1 class="text-2xl font-bold mb-6 text-center">Login</h1>
 
@@ -40,17 +42,20 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { getUserProfile, checkAuth } from '~/utils/func'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { getUserProfile } from '~/utils/func';
+import Loader from '~/components/Loader.vue';
 
 const email = ref('');
 const password = ref('');
 const router = useRouter();
+const isLoading = ref(false);
 
 const emit = defineEmits();
 
 const handleLogin = async () => {
+  isLoading.value = true;
   try {
     const response = await $fetch('https://api.escuelajs.co/api/v1/auth/login', {
       method: 'POST',
@@ -74,6 +79,8 @@ const handleLogin = async () => {
 
   } catch (error) {
     console.error('Login fallito:', error)
+  } finally{
+    isLoading.value = false;
   }
 }
 </script>

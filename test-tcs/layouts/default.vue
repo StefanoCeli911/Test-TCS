@@ -18,7 +18,7 @@
         <ul class="hidden lg:flex space-x-4">
           <li><NuxtLink to="/" class="hover:text-slate-400">Home</NuxtLink></li>
           <li v-if="isAuthenticated"><NuxtLink to="/products" class="hover:text-slate-400">Prodotti</NuxtLink></li>
-          <li v-if="isAuthenticated && userRole=='admin'"><NuxtLink to="/admin" class="hover:text-slate-400">Pannello Admin</NuxtLink></li>
+          <li v-if="userRole=='admin'"><NuxtLink to="/admin" class="hover:text-slate-400">Pannello Admin</NuxtLink></li>
           <li class="text-center" v-if="isAuthenticated"><NuxtLink @click="logout" class="cursor-pointer hover:text-slate-400">Logout</NuxtLink></li>
           <li v-if="!isAuthenticated"><NuxtLink to="/login" class="hover:text-slate-400">Login</NuxtLink></li>
         </ul>
@@ -31,7 +31,7 @@
             <ul class="space-y-4">
               <li class="text-center"><NuxtLink @click="toggleMenu" to="/" class="block text-lg hover:text-slate-400">Home</NuxtLink></li>
               <li class="text-center" v-if="isAuthenticated"><NuxtLink @click="toggleMenu" to="/products" class="block text-lg hover:text-slate-400">Prodotti</NuxtLink></li>
-              <li class="text-center" v-if="isAuthenticated && userRole=='admin'"><NuxtLink @click="toggleMenu" to="/admin" class="block text-lg hover:text-slate-400">Pannello Admin</NuxtLink></li>
+              <li class="text-center" v-if="userRole=='admin'"><NuxtLink @click="toggleMenu" to="/admin" class="block text-lg hover:text-slate-400">Pannello Admin</NuxtLink></li>
               <li class="text-center" v-if="isAuthenticated"><NuxtLink @click="logout" class="cursor-pointer block text-lg hover:text-slate-400">Logout</NuxtLink></li>
               <li class="text-center" v-if="!isAuthenticated"><NuxtLink @click="toggleMenu" to="/login" class="block text-lg hover:text-slate-400">Login</NuxtLink></li>
             </ul>
@@ -57,45 +57,35 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { checkAuth } from '~/utils/func'
 
 const router = useRouter();
 const isAuthenticated = ref(false);
 const name = ref('');
 const userRole = ref('');
+const isMenuOpen = ref(false);
 
 onMounted(() => {
-  //Variabile per verificare se l'utente è loggato
+  // Controllo autenticazione
   isAuthenticated.value = checkAuth();
-
-  //Prendo dal local storage il ruolo e il name
-  const roleFromStorage = localStorage.getItem('role');
-  const userNameFromStorage = localStorage.getItem('name');
-
-  if(isAuthenticated){
-    userRole.value = roleFromStorage;
-    name.value = userNameFromStorage;
-  }
-})
-
-// Stato del menu
-const isMenuOpen = ref(false)
+  userRole.value = localStorage.getItem('role');
+  name.value = localStorage.getItem('name');
+});
 
 // Toggle menu
 const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value
+  isMenuOpen.value = !isMenuOpen.value;
 }
 
 const logout = () => {
   // Rimuovi il token e il ruolo dal localStorage
-  localStorage.removeItem('token')
-  localStorage.removeItem('role')
-  localStorage.removeItem('username') // Se hai salvato anche il nome utente
+  localStorage.removeItem('token');
+  localStorage.removeItem('role');
+  localStorage.removeItem('name');
 
   // Aggiorna lo stato di autenticazione
-  isAuthenticated.value = false
-  userRole.value = ''
-  name.value = ''
+  isAuthenticated.value = false;
+  userRole.value = '';
+  name.value = '';
   
   isMenuOpen.value = !isMenuOpen.value;
 
@@ -108,6 +98,8 @@ const logout = () => {
 // Funzione per gestire l'evento di login
 const handleLoginSuccess = (authenticated) => {
   isAuthenticated.value = authenticated;
+  userRole.value = localStorage.getItem('role');
+  name.value = localStorage.getItem('name');
 }
 </script>
 
