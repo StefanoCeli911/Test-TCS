@@ -5,8 +5,8 @@ definePageMeta({
 </script>
 
 <template>
-  <div>
-    <h1 class="text-2xl">Prodotti</h1>
-
+  <div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">Prodotti</h1>
+    
   </div>
 </template>

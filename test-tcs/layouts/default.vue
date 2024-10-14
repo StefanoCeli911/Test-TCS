@@ -26,7 +26,7 @@
 
       <!-- Menu mobile -->
       <transition name="slide-left">
-        <div v-if="isMenuOpen" class="rounded bold absolute right-0 top-14 w-2/5 bg-gray-800 text-white shadow-lg z-10">
+        <div v-if="isMenuOpen" class="rounded bold absolute right-0 top-14 w-2/5 bg-gray-800 text-white shadow-lg lg:hidden z-10">
           <div class="container mx-auto py-4">
             <ul class="space-y-4">
               <li class="text-center"><NuxtLink @click="toggleMenu" to="/" class="block text-lg hover:text-slate-400">Home</NuxtLink></li>
