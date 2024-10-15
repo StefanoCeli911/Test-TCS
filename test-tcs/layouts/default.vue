@@ -8,7 +8,7 @@
          <!-- Icona hamburger mobile -->
          <div class="lg:hidden">
           <button @click="toggleMenu" class="focus:outline-none">
-            <svg xmlns="http://www.w3.org/2000/svg" :class="{'transform rotate-90': isMenuOpen}" class="h-6 w-6 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 transition-transform duration-300" :class="{'transform rotate-90': isMenuOpen}"  fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
             </svg>
           </button>
@@ -17,10 +17,10 @@
         <!-- Links desktop -->
         <ul class="hidden lg:flex space-x-4">
           <li><NuxtLink to="/" class="hover:text-slate-400">Home</NuxtLink></li>
-          <li v-if="isAuthenticated"><NuxtLink to="/products" class="hover:text-slate-400">Prodotti</NuxtLink></li>
-          <li v-if="userRole=='admin'"><NuxtLink to="/admin" class="hover:text-slate-400">Pannello Admin</NuxtLink></li>
-          <li class="text-center" v-if="isAuthenticated"><NuxtLink @click="logout" class="cursor-pointer hover:text-slate-400">Logout</NuxtLink></li>
-          <li v-if="!isAuthenticated"><NuxtLink to="/login" class="hover:text-slate-400">Login</NuxtLink></li>
+          <li v-show="isAuthenticated"><NuxtLink to="/products" class="hover:text-slate-400">Prodotti</NuxtLink></li>
+          <li v-show="userRole=='admin'"><NuxtLink to="/admin" class="hover:text-slate-400">Pannello Admin</NuxtLink></li>
+          <li class="text-center" v-show="isAuthenticated"><NuxtLink @click="logout" class="cursor-pointer hover:text-slate-400">Logout</NuxtLink></li>
+          <li v-show="!isAuthenticated"><NuxtLink to="/login" class="hover:text-slate-400">Login</NuxtLink></li>
         </ul>
       </nav>
 
@@ -30,10 +30,10 @@
           <div class="container mx-auto py-4">
             <ul class="space-y-4">
               <li class="text-center"><NuxtLink @click="toggleMenu" to="/" class="block text-lg hover:text-slate-400">Home</NuxtLink></li>
-              <li class="text-center" v-if="isAuthenticated"><NuxtLink @click="toggleMenu" to="/products" class="block text-lg hover:text-slate-400">Prodotti</NuxtLink></li>
-              <li class="text-center" v-if="userRole=='admin'"><NuxtLink @click="toggleMenu" to="/admin" class="block text-lg hover:text-slate-400">Pannello Admin</NuxtLink></li>
-              <li class="text-center" v-if="isAuthenticated"><NuxtLink @click="logout" class="cursor-pointer block text-lg hover:text-slate-400">Logout</NuxtLink></li>
-              <li class="text-center" v-if="!isAuthenticated"><NuxtLink @click="toggleMenu" to="/login" class="block text-lg hover:text-slate-400">Login</NuxtLink></li>
+              <li class="text-center" v-show="isAuthenticated"><NuxtLink @click="toggleMenu" to="/products" class="block text-lg hover:text-slate-400">Prodotti</NuxtLink></li>
+              <li class="text-center" v-show="userRole=='admin'"><NuxtLink @click="toggleMenu" to="/admin" class="block text-lg hover:text-slate-400">Pannello Admin</NuxtLink></li>
+              <li class="text-center" v-show="isAuthenticated"><NuxtLink @click="logout" class="cursor-pointer block text-lg hover:text-slate-400">Logout</NuxtLink></li>
+              <li class="text-center" v-show="!isAuthenticated"><NuxtLink @click="toggleMenu" to="/login" class="block text-lg hover:text-slate-400">Login</NuxtLink></li>
             </ul>
           </div>
         </div>
@@ -42,7 +42,7 @@
 
     <!-- Page Content -->
     <main class="flex-grow container mx-auto p-4">
-      <NuxtPage  @login="handleLoginSuccess" />
+      <NuxtPage/>
     </main>
 
     <!-- Footer -->
@@ -55,21 +55,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref,computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { useUserStore } from '~/stores/userStore';
 
+const userStore = useUserStore();
 const router = useRouter();
-const isAuthenticated = ref(false);
-const name = ref('');
-const userRole = ref('');
 const isMenuOpen = ref(false);
 
-onMounted(() => {
-  // Controllo autenticazione
-  isAuthenticated.value = checkAuth();
-  userRole.value = localStorage.getItem('role');
-  name.value = localStorage.getItem('name');
-});
+// Rendo le variabili reattive
+const isAuthenticated = computed(() => userStore.isAuthenticated);
+const userRole = computed(() => userStore.role);
+
 
 // Toggle menu
 const toggleMenu = () => {
@@ -77,30 +74,18 @@ const toggleMenu = () => {
 }
 
 const logout = () => {
-  // Rimuovi il token e il ruolo dal localStorage
-  localStorage.removeItem('token');
-  localStorage.removeItem('role');
-  localStorage.removeItem('name');
+  // Usa le azioni del tuo store per effettuare il logout
+  userStore.logout();
 
-  // Aggiorna lo stato di autenticazione
-  isAuthenticated.value = false;
-  userRole.value = '';
-  name.value = '';
-  
-  isMenuOpen.value = !isMenuOpen.value;
+  // Aggiorna lo stato del menu
+  isMenuOpen.value = false;
 
   // Reindirizza a login
   router.push('/login').catch(err => {
-  console.error('Errore nel reindirizzamento:', err);
-});
+    console.error('Errore nel reindirizzamento:', err);
+  });
 }
 
-// Funzione per gestire l'evento di login
-const handleLoginSuccess = (authenticated) => {
-  isAuthenticated.value = authenticated;
-  userRole.value = localStorage.getItem('role');
-  name.value = localStorage.getItem('name');
-}
 </script>
 
 <style scoped>

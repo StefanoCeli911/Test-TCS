@@ -44,6 +44,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useUserStore } from '@/stores/userStore';
 import { getUserProfile } from '~/utils/func';
 import Loader from '~/components/Loader.vue';
 
@@ -51,6 +52,7 @@ const email = ref('');
 const password = ref('');
 const router = useRouter();
 const isLoading = ref(false);
+const userStore = useUserStore();
 
 const emit = defineEmits();
 
@@ -69,10 +71,8 @@ const handleLogin = async () => {
     localStorage.setItem('token', response.access_token);
 
     // Dopo aver ottenuto il token, chiama la funzione per ottenere il profilo utente
-    await getUserProfile(response.access_token);
-
-    //Creo un emit per aggiornare la variabile in default.vue
-    emit('login', true);
+    const userData = await getUserProfile(response.access_token);
+    userStore.login(userData);
 
     // Reindirizza alla pagina prodotti dopo il login
     router.push('/products');

@@ -1,8 +1,14 @@
 <script setup>
-import { onMounted } from 'vue';
+import { onBeforeMount, onMounted  } from 'vue';
+import { useUserStore } from '@/stores/userStore';
 import { createAdmin } from '~/utils/func';
 
+const userStore = useUserStore();
 // Esegui la funzione all'avvio dell'applicazione
+onBeforeMount (() => {
+  userStore.initializeStore();
+
+});
 onMounted(() => {
   createAdmin();
 });

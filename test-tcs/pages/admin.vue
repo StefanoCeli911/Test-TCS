@@ -1,5 +1,5 @@
 <template>
-  <div class="p-4" v-if="isAuthenticated">
+  <div v-show="isAuthenticated" class="p-4" >
     <h1 class="text-2xl text-center font-bold mb-4">Admin Panel</h1>
 
     <!-- Mostra il loader se i dati non sono ancora caricati -->
@@ -101,82 +101,82 @@
         >
           Successivo
         </button>
-      </div>
+    </div>
 
     <!-- Dialog per creare nuovo utente -->
-  <div v-if="showCreateUserDialog" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3">
-      <h2 class="text-xl font-bold mb-4">Crea Nuovo Utente</h2>
-      <form @submit.prevent="createUser">
-        <div class="mb-4">
-          <label class="block">Nome</label>
-          <input v-model="newUser.name" type="text" class="border p-2 w-full rounded">
-        </div>
-        <div class="mb-4">
-          <label class="block">Email</label>
-          <input v-model="newUser.email" type="email" class="border p-2 w-full rounded">
-        </div>
-        <div class="mb-4">
-          <label class="block">Password</label>
-          <input v-model="newUser.password" type="password" class="border p-2 w-full rounded">
-        </div>
-        <div class="mb-4">
-          <label class="block">Avatar URL</label>
-          <input v-model="newUser.avatar" type="text" class="border p-2 w-full rounded">
-        </div>
-        <div class="mb-4">
-          <label class="block">Ruolo</label>
-          <select v-model="newUser.role" class="border p-2 w-full rounded">
-            <option value="customer">Customer</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
-        <div class="flex justify-end">
-          <button type="button" @click="closeCreateUserDialog" class="bg-gray-500 text-white p-2 rounded mr-2">Annulla</button>
-          <button type="submit" class="bg-green-500 text-white p-2 rounded">Crea</button>
-        </div>
-      </form>
+    <div v-if="showCreateUserDialog" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+      <div class="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3">
+        <h2 class="text-xl font-bold mb-4">Crea Nuovo Utente</h2>
+        <form @submit.prevent="createUser">
+          <div class="mb-4">
+            <label class="block">Nome</label>
+            <input v-model="newUser.name" type="text" class="border p-2 w-full rounded">
+          </div>
+          <div class="mb-4">
+            <label class="block">Email</label>
+            <input v-model="newUser.email" type="email" class="border p-2 w-full rounded">
+          </div>
+          <div class="mb-4">
+            <label class="block">Password</label>
+            <input v-model="newUser.password" type="password" class="border p-2 w-full rounded">
+          </div>
+          <div class="mb-4">
+            <label class="block">Avatar URL</label>
+            <input v-model="newUser.avatar" type="text" class="border p-2 w-full rounded">
+          </div>
+          <div class="mb-4">
+            <label class="block">Ruolo</label>
+            <select v-model="newUser.role" class="border p-2 w-full rounded">
+              <option value="customer">Customer</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div class="flex justify-end">
+            <button type="button" @click="closeCreateUserDialog" class="bg-gray-500 text-white p-2 rounded mr-2">Annulla</button>
+            <button type="submit" class="bg-green-500 text-white p-2 rounded">Crea</button>
+          </div>
+        </form>
+      </div>
     </div>
-  </div>
 
-  <!-- Dialog per modificare un utente -->
-  <div v-if="showEditUserDialog" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
-    <div class="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3">
-      <h2 class="text-xl font-bold mb-4">Modifica Utente</h2>
-      <form @submit.prevent="updateUser">
-        <div class="mb-4">
-          <label class="block">Nome</label>
-          <input v-model="updatedUserData.name" type="text" class="border p-2 w-full rounded">
-        </div>
-        <div class="mb-4">
-          <label class="block">Email</label>
-          <input v-model="updatedUserData.email" type="email" class="border p-2 w-full rounded">
-        </div>
-        <div class="mb-4">
-          <label class="block">Password</label>
-          <input v-model="updatedUserData.password" type="password" class="border p-2 w-full rounded">
-        </div>
-        <div class="mb-4">
-          <label class="block">Avatar</label>
-          <input v-model="updatedUserData.avatar" type="text" class="border p-2 w-full rounded">
-        </div>
-        <div class="mb-4">
-          <label class="block">Ruolo</label>
-          <select v-model="updatedUserData.role" class="border p-2 w-full rounded">
-            <option value="customer">Customer</option>
-            <option value="admin">Admin</option>
-          </select>
-        </div>
-        <div class="flex justify-end">
-          <button type="button" @click="closeEditUserDialog" class="bg-gray-500 text-white p-2 rounded mr-2">Annulla</button>
-          <button type="submit" class="bg-blue-500 text-white p-2 rounded">Aggiorna</button>
-        </div>
-      </form>
+    <!-- Dialog per modificare un utente -->
+    <div v-if="showEditUserDialog" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+      <div class="bg-white p-6 rounded-lg shadow-lg w-11/12 md:w-1/3">
+        <h2 class="text-xl font-bold mb-4">Modifica Utente</h2>
+        <form @submit.prevent="updateUser">
+          <div class="mb-4">
+            <label class="block">Nome</label>
+            <input v-model="updatedUserData.name" type="text" class="border p-2 w-full rounded">
+          </div>
+          <div class="mb-4">
+            <label class="block">Email</label>
+            <input v-model="updatedUserData.email" type="email" class="border p-2 w-full rounded">
+          </div>
+          <div class="mb-4">
+            <label class="block">Password</label>
+            <input v-model="updatedUserData.password" type="password" class="border p-2 w-full rounded">
+          </div>
+          <div class="mb-4">
+            <label class="block">Avatar</label>
+            <input v-model="updatedUserData.avatar" type="text" class="border p-2 w-full rounded">
+          </div>
+          <div class="mb-4">
+            <label class="block">Ruolo</label>
+            <select v-model="updatedUserData.role" class="border p-2 w-full rounded">
+              <option value="customer">Customer</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div class="flex justify-end">
+            <button type="button" @click="closeEditUserDialog" class="bg-gray-500 text-white p-2 rounded mr-2">Annulla</button>
+            <button type="submit" class="bg-blue-500 text-white p-2 rounded">Aggiorna</button>
+          </div>
+        </form>
+      </div>
     </div>
-  </div>
 
-  <!-- Dialog per conferma operazione -->
-  <div v-if="showSuccessDialog" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-20">
+    <!-- Dialog per conferma operazione -->
+    <div v-if="showSuccessDialog" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-20">
       <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full text-center">
         <p class="text-lg font-semibold">Operazione completata con successo!</p>
         <button
@@ -190,17 +190,13 @@
     
   </div>
 
-  <div v-else>
-    <p v-if="!isLoading">Non risulti con privilegi amministrativi, verrai reindirizzato alla home page.</p>
-  </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { checkAuth } from '~/utils/func';
+import { ref, onMounted, computed } from 'vue';
+import { useUserStore } from '~/stores/userStore';
 import Loader from '~/components/Loader.vue';
 
-const isAuthenticated = ref(false);
 const users = ref([]);
 const filteredUsers = ref([]);
 const paginatedUsers = ref([]);
@@ -221,10 +217,18 @@ const newUser = ref({
 const selectedUser = ref(null);
 const updatedUserData = ref({});
 const isLoading = ref(true);
+const userStore = useUserStore();
 
-onMounted(() => {
-  // Controllo autenticazione e recupero utenti
-  isAuthenticated.value = checkAuth();
+const isAuthenticated = computed(() => userStore.isAuthenticated);
+
+definePageMeta({
+  middleware: 'auth'
+})
+
+
+onMounted(async () => {
+  userStore.initializeStore();
+//Lista utenti
   fetchUsers();
 });
 
