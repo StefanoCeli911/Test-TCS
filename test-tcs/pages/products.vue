@@ -5,6 +5,31 @@
     <Loader v-if="loading" />
     <div v-if="error" class="text-red-500">{{ error }}</div>
     
+     <!-- Select per i filtri -->
+     <div class="sticky top-0 bg-white z-10 shadow-md p-4">
+      <div class="flex space-x-4">
+        <!-- Seleziona la categoria -->
+        <select v-model="selectedCategory" @change="applyFilters" class="p-2 border rounded">
+          <option value="">Seleziona una categoria</option>
+          <option v-for="category in categories" :key="category.id" :value="category.id">
+            {{ category.name }}
+          </option>
+        </select>
+
+        <!-- Filtro per il titolo -->
+        <input v-model="titleFilter" @input="applyFilters" placeholder="Filtra per titolo" class="p-2 border rounded" />
+
+        <!-- Filtro per il range di prezzo -->
+        <input v-model.number="priceMin" @input="applyFilters" placeholder="Prezzo Min" class="p-2 border rounded" type="number" />
+        <input v-model.number="priceMax" @input="applyFilters" placeholder="Prezzo Max" class="p-2 border rounded" type="number" />
+      </div>
+    </div>
+
+      <!-- Messaggio se nessun prodotto è stato trovato -->
+      <div v-if="noProductsFound  && !loading" class="text-center text-gray-500 my-4 font-bold">
+        Nessun prodotto trovato
+      </div>
+
       <div v-if="products.length > 0">
 
         <div class="container mx-auto px-4 py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -33,7 +58,7 @@
                       </div>
                       
                     </div>
-                    
+
                 </div>
                 <div class="flex justify-between items-center mt-4 p-4 border-t">
                   <span class="text-xl font-bold text-gray-600">Prezzo:</span>
@@ -46,7 +71,7 @@
             Carica altro
           </button>
         </div>
-        <div v-else class="text-center my-4 text-gray-500 font-bold">
+        <div v-else-if="allProductsLoaded && products.length > 0" class="text-center my-4 text-gray-500 font-bold">
           Tutti i prodotti sono stati caricati
         </div>
       </div>
@@ -60,7 +85,7 @@ import { onMounted, computed, ref } from 'vue';
 import Loader from '~/components/Loader.vue';
 
 const productsStore = useProductsStore();
-const { fetchProducts } = productsStore;
+const { fetchCategories, fetchProducts } = productsStore;
 const currentImageMap = ref({});
 let offset = ref(0);
 
@@ -68,17 +93,34 @@ definePageMeta({
   middleware: 'auth'
 })
 
-const loadMoreProducts = async () => {
-  try {
-    await fetchProducts(offset.value); // Passa l'offset alla funzione fetchProducts
-    offset.value += 50; // Aggiorna l'offset
-  } catch (error) {
-    console.error("Errore nel caricamento dei prodotti:", error);
+const selectedCategory = ref(''); 
+const titleFilter = ref(''); 
+const priceMin = ref(null); 
+const priceMax = ref(null); 
+const noProductsFound = ref(false); // Nuovo: Stato per indicare se ci sono prodotti
+
+// Funzione per applicare i filtri e resettare i prodotti
+const applyFilters = async () => {
+  offset.value = 0; // Resetta l'offset
+  noProductsFound.value = false; // Resetta il messaggio di "nessun prodotto"
+  
+  await fetchProducts(selectedCategory.value, titleFilter.value, priceMin.value, priceMax.value, offset.value);
+  
+  // Se non ci sono prodotti restituiti, mostra il messaggio
+  if (products.value.length === 0) {
+    noProductsFound.value = true;
   }
 };
 
+// Funzione per caricare più prodotti
+const loadMoreProducts = async () => {
+  offset.value += 50; // Incrementa l'offset
+  await fetchProducts(selectedCategory.value, titleFilter.value, priceMin.value, priceMax.value, offset.value);
+};
+
 onMounted(() => {
-  loadMoreProducts();
+  fetchCategories(); // Carica le categorie
+  fetchProducts(selectedCategory.value, titleFilter.value, priceMin.value, priceMax.value, offset.value); // Carica i prodotti iniziali
 });
 
 const onImageError = (event) => {
@@ -95,10 +137,10 @@ const changeImage = (image, productId) => {
   currentImageMap.value[productId] = image; // Imposta l'immagine selezionata
 };
 
-
-// Propietà Computed accedere in modo reattivo allo store
+// Proprietà Computed per accedere in modo reattivo allo store
 const products = computed(() => productsStore.products);
 const allProductsLoaded = computed(() => productsStore.allProductsLoaded);
 const loading = computed(() => productsStore.loading);
 const error = computed(() => productsStore.error);
+const categories  = computed(() => productsStore.categories);
 </script>
