@@ -5,14 +5,19 @@ import { ref } from 'vue';
 export const useProductsStore = defineStore('products', () => {
   const products = ref([]);
   const loading = ref(false);
+  const allProductsLoaded = ref(false);
   const error = ref(null);
 
-  const fetchProducts = async () => {
+  const fetchProducts = async (offset) => { 
     loading.value = true;
     error.value = null;
     try {
-      const response = await axios.get('https://api.escuelajs.co/api/v1/products?offset=0&limit=50');
-      products.value = response.data;
+      const response = await axios.get(`https://api.escuelajs.co/api/v1/products?offset=${offset}&limit=50`);
+      if(response.data!=""){
+        products.value.push(...response.data);
+      }else{
+        allProductsLoaded.value=true;
+      }
     } catch (err) {
       error.value = 'Errore nel caricamento dei prodotti';
     } finally {
@@ -35,6 +40,7 @@ export const useProductsStore = defineStore('products', () => {
   return {
     products,
     loading,
+    allProductsLoaded,
     error,
     fetchProducts,
     fetchProductsHomePage

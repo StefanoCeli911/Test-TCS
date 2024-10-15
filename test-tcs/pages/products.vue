@@ -1,14 +1,11 @@
 <template>
   <div>
     <h1 class="text-xl font-bold text-center my-4">La nostra selezione di prodotti</h1>
-   <!--  <button @click="fetchProducts" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring">
-      Carica Prodotti
-    </button> -->
 
     <Loader v-if="loading" />
     <div v-if="error" class="text-red-500">{{ error }}</div>
     
-    <div v-if="!loading && products.length > 0">
+      <div v-if="products.length > 0">
 
         <div class="container mx-auto px-4 py-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           <div v-for="product in products" :key="product.id" class="bg-white rounded-lg shadow-md flex flex-col overflow-hidden">
@@ -44,27 +41,44 @@
                 </div>
           </div>
         </div>
-    </div>
-
+        <div v-if="!allProductsLoaded" class="flex justify-center my-4">
+          <button @click="loadMoreProducts" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring">
+            Carica altro
+          </button>
+        </div>
+        <div v-else class="text-center my-4 text-gray-500 font-bold">
+          Tutti i prodotti sono stati caricati
+        </div>
+      </div>
   </div>
 </template>
 
 
 <script setup>
 import { useProductsStore } from '@/stores/products';
-import { onMounted, computed } from 'vue';
+import { onMounted, computed, ref } from 'vue';
 import Loader from '~/components/Loader.vue';
 
 const productsStore = useProductsStore();
 const { fetchProducts } = productsStore;
 const currentImageMap = ref({});
+let offset = ref(0);
 
 definePageMeta({
   middleware: 'auth'
 })
 
+const loadMoreProducts = async () => {
+  try {
+    await fetchProducts(offset.value); // Passa l'offset alla funzione fetchProducts
+    offset.value += 50; // Aggiorna l'offset
+  } catch (error) {
+    console.error("Errore nel caricamento dei prodotti:", error);
+  }
+};
+
 onMounted(() => {
-  fetchProducts();
+  loadMoreProducts();
 });
 
 const onImageError = (event) => {
@@ -84,6 +98,7 @@ const changeImage = (image, productId) => {
 
 // Propietà Computed accedere in modo reattivo allo store
 const products = computed(() => productsStore.products);
+const allProductsLoaded = computed(() => productsStore.allProductsLoaded);
 const loading = computed(() => productsStore.loading);
 const error = computed(() => productsStore.error);
 </script>
