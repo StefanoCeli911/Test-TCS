@@ -54,7 +54,12 @@ export const useProductsStore = defineStore('products', () => {
     loading.value = true;
     error.value = null;
     try {
-      const response = await axios.get('https://api.escuelajs.co/api/v1/products?offset=0&limit=10');
+      const response = await axios.get('https://api.escuelajs.co/api/v1/products',{
+          params: {
+            price_min: 20,
+            price_max: 70,
+          }
+      });
       products.value = response.data;
     } catch (err) {
       error.value = 'Errore nel caricamento dei prodotti';

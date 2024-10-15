@@ -17,6 +17,7 @@
             :src="product.images[0]" 
             alt="Product Image" 
             class="w-full h-48 object-fit h-[300px]" 
+            @error="onImageError"
           />
           
           <div class="flex-1 p-4">
@@ -51,6 +52,10 @@ const loading = computed(() => productsStore.loading);
 onMounted(()=>{
   fetchProductsHomePage();
 })
+
+const onImageError = (event) => {
+  event.target.src = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/1255/image-not-found.svg';
+};
 </script>
 
 <style scoped>
