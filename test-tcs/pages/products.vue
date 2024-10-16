@@ -6,10 +6,18 @@
     <div v-if="error" class="text-red-500">{{ error }}</div>
     
      <!-- Select per i filtri -->
-     <div class="sticky top-0 bg-white z-10 shadow-md p-4">
-      <div class="flex space-x-4">
+    <div class="sticky top-0 bg-white z-10 shadow-md p-4">
+
+      <!-- Bottone per aprire/chiudere i filtri su mobile -->
+      <button @click="toggleFilterMenu" :class="filterMenuOpen ? 'bg-red-500' : 'bg-blue-500'" class="w-full text-white py-2 px-4 rounded-md sm:hidden">
+        {{ filterMenuOpen ? 'Chiudi filtri' : 'Filtri' }}
+      </button>
+
+  
+      <p class="hidden sm:block text-center font-bold text-blue-500">Filtri</p>
+      <div :class="{'hidden': !filterMenuOpen, 'sm:flex': true}" class="mt-4 flex-col lg:flex-row space-y-4 lg:space-y-0 lg:justify-around">
         <!-- Seleziona la categoria -->
-        <select v-model="selectedCategory" @change="applyFilters" class="p-2 border rounded">
+        <select v-model="selectedCategory" @change="applyFilters" class="p-2 border rounded w-full sm:w-auto">
           <option value="">Seleziona una categoria</option>
           <option v-for="category in categories" :key="category.id" :value="category.id">
             {{ category.name }}
@@ -17,13 +25,16 @@
         </select>
 
         <!-- Filtro per il titolo -->
-        <input v-model="titleFilter" @input="applyFilters" placeholder="Filtra per titolo" class="p-2 border rounded" />
+        <input v-model="titleFilter" @input="applyFilters" placeholder="Filtra per titolo" class="p-2 border rounded w-full sm:w-auto" />
 
         <!-- Filtro per il range di prezzo -->
-        <input v-model.number="priceMin" @input="applyFilters" placeholder="Prezzo Min" class="p-2 border rounded" type="number" />
-        <input v-model.number="priceMax" @input="applyFilters" placeholder="Prezzo Max" class="p-2 border rounded" type="number" />
+        <div class="flex space-x-2 sm:justify-around">
+          <input v-model.number="priceMin" @input="applyFilters" placeholder="Prezzo Min" class="p-2 border rounded w-full sm:w-auto" type="number" />
+          <input v-model.number="priceMax" @input="applyFilters" placeholder="Prezzo Max" class="p-2 border rounded w-full sm:w-auto" type="number" />
+        </div>
       </div>
     </div>
+
 
       <!-- Messaggio se nessun prodotto è stato trovato -->
       <div v-if="noProductsFound  && !loading" class="text-center text-gray-500 my-4 font-bold">
@@ -97,7 +108,12 @@ const selectedCategory = ref('');
 const titleFilter = ref(''); 
 const priceMin = ref(null); 
 const priceMax = ref(null); 
-const noProductsFound = ref(false); // Nuovo: Stato per indicare se ci sono prodotti
+const noProductsFound = ref(false);
+const filterMenuOpen = ref(false);
+
+const toggleFilterMenu = () => {
+  filterMenuOpen.value = !filterMenuOpen.value;
+};
 
 // Funzione per applicare i filtri e resettare i prodotti
 const applyFilters = async () => {

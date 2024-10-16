@@ -15,7 +15,7 @@ export const useProductsStore = defineStore('products', () => {
 
     // Imposto i valori di default per priceMin e priceMax
     if (!priceMin && priceMax) {
-      priceMin = 0; // Se viene settato solo priceMax, imposta priceMin a 0
+      priceMin = 1; // Se viene settato solo priceMax, imposta priceMin a 1
     }
     if (!priceMax && priceMin) {
       priceMax = 99999999; // Se viene settato solo priceMin, imposta priceMax a un valore alto
@@ -32,7 +32,7 @@ export const useProductsStore = defineStore('products', () => {
       };
       
       const response = await axios.get('https://api.escuelajs.co/api/v1/products/', { params });
-      
+
       if (response.data.length > 0) {
         // Se si tratta di una nuova ricerca, resetta l'array dei prodotti
         products.value = offset === 0 ? response.data : [...products.value, ...response.data];
@@ -41,7 +41,7 @@ export const useProductsStore = defineStore('products', () => {
         // Nessun prodotto trovato, resetta l'array e imposta la variabile di stato
         products.value = [];
         allProductsLoaded.value = true;
-        
+
       }
     } catch (err) {
       error.value = 'Errore nel caricamento dei prodotti';
