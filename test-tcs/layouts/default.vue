@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex flex-col bg-gray-100 relative">
     <!-- Navbar -->
-    <header class="bg-gray-800 text-white p-4">
+    <header class="sticky top-0 bg-gray-800 text-white p-4 z-20">
       <nav class="container mx-auto flex justify-between items-center">
         <div class="text-lg font-bold"><NuxtLink to="/" class="cursor-pointer">Top Consulting & Services</NuxtLink></div>
 
@@ -26,7 +26,7 @@
 
       <!-- Menu mobile -->
       <transition name="slide-left">
-        <div v-if="isMenuOpen" class="rounded bold absolute right-0 top-14 w-2/5 bg-gray-800 text-white shadow-lg lg:hidden z-10">
+        <div v-if="isMenuOpen" class="rounded bold absolute right-0 top-14 w-2/5 bg-gray-800 text-white shadow-lg lg:hidden z-20">
           <div class="container mx-auto py-4">
             <ul class="space-y-4">
               <li class="text-center"><NuxtLink @click="toggleMenu" to="/" class="block text-lg hover:text-slate-400">Home</NuxtLink></li>

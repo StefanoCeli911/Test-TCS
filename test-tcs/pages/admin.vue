@@ -25,6 +25,12 @@
       >
         Cerca
       </button>
+      <button
+        @click="reset"
+        class="bg-gray-500 text-white p-2 rounded"
+      >
+        Reset
+      </button>
     </div>
 
    
@@ -176,17 +182,12 @@
     </div>
 
     <!-- Dialog per conferma operazione -->
-    <div v-if="showSuccessDialog" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-20">
-      <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full text-center">
-        <p class="text-lg font-semibold">Operazione completata con successo!</p>
-        <button
-          class="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          @click="closeSuccessDialog"
-        >
-          Ok
-        </button>
-      </div>
-    </div>
+    <ConfirmDialog
+      v-if="showSuccessDialog"
+      @close="closeSuccessDialog"
+      title="Operazione completata!"
+      message="L'operazione richiesta è andata a buon fine!"
+    />
     
   </div>
 
@@ -196,6 +197,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { useUserStore } from '~/stores/userStore';
 import Loader from '~/components/Loader.vue';
+import ConfirmDialog from '~/components/ConfirmDialog.vue';
 
 const users = ref([]);
 const filteredUsers = ref([]);
@@ -225,6 +227,7 @@ definePageMeta({
   middleware: 'auth'
 })
 
+const emit = defineEmits(['close']);
 
 onMounted(async () => {
   userStore.initializeStore();
@@ -293,6 +296,11 @@ const handleSearch = () => {
   updateFilteredUsers();
   updatePaginatedUsers();
 };
+
+const reset = ()=>{
+  searchQuery.value="";
+  handleSearch();
+}
 
 // Funzione per aggiornare gli utenti filtrati
 const updateFilteredUsers = () => {

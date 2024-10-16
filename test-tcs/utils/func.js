@@ -54,3 +54,40 @@ export const createAdmin = async () => {
     console.error('Errore durante la verifica o la creazione dell\'utente admin:', error);
   }
 };
+export const createCustomer = async () => {
+  try {
+    
+    const response = await fetch('https://api.escuelajs.co/api/v1/users');
+    const users = await response.json();
+    
+    // Verifica se esiste già un utente la mail
+    const customerUser = users.some(user => user.email === 'customer91@mail.com');
+
+    if (!customerUser) {
+      // Crea un nuovo utente con il ruolo admin
+      const newCustomerUser = {
+        name: 'Stefano',
+        email: 'customer91@mail.com',  
+        password: 'customer',   
+        avatar: 'https://api.lorem.space/image/face?w=150&h=150', 
+        role: 'customer'
+      };
+
+      const createResponse = await fetch('https://api.escuelajs.co/api/v1/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newCustomerUser),
+      });
+
+      if (createResponse.ok) {
+        console.log('Utente admin creato con successo');
+      } else {
+        console.error('Errore durante la creazione dell\'utente admin');
+      }
+    } 
+  } catch (error) {
+    console.error('Errore durante la verifica o la creazione dell\'utente admin:', error);
+  }
+};

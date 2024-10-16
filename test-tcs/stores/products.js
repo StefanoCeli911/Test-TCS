@@ -68,6 +68,38 @@ export const useProductsStore = defineStore('products', () => {
     }
   };
 
+  // Funzione per eliminare molteplici prodotti selezionati
+  const deleteProducts = async (productIds) => {
+    loading.value = true;
+    error.value = null;
+    try {
+      for (const id of productIds) {
+        await axios.delete(`https://api.escuelajs.co/api/v1/products/${id}`);
+      }
+      products.value = products.value.filter((product) => !productIds.includes(product.id));
+    } catch (err) {
+      error.value = 'Errore durante l\'eliminazione dei prodotti';
+      console.error(err);
+    }finally {
+      loading.value = false;
+    }
+  };
+
+    // Funzione per aggiungere un nuovo prodotto
+    const addProduct = async (newProduct) => {
+      loading.value = true;
+      error.value = null;
+      try {
+        const response = await axios.post('https://api.escuelajs.co/api/v1/products', newProduct);
+        products.value.push(response.data); // Aggiungi il nuovo prodotto all'array dei prodotti
+      } catch (err) {
+        error.value = 'Errore durante l\'aggiunta del prodotto';
+        console.error(err);
+      } finally {
+        loading.value = false;
+      }
+    };
+
   const fetchCategories = async () => {
     try {
       const response = await axios.get('https://api.escuelajs.co/api/v1/categories');
@@ -85,7 +117,9 @@ export const useProductsStore = defineStore('products', () => {
     categories,
     fetchProducts,
     fetchProductsHomePage,
-    fetchCategories
+    fetchCategories,
+    deleteProducts,
+    addProduct
   };
 });
 

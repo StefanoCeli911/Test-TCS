@@ -1,7 +1,7 @@
 <script setup>
 import { onBeforeMount, onMounted  } from 'vue';
 import { useUserStore } from '@/stores/userStore';
-import { createAdmin } from '~/utils/func';
+import { createAdmin, createCustomer } from '~/utils/func';
 
 const userStore = useUserStore();
 // Esegui la funzione all'avvio dell'applicazione
@@ -11,6 +11,7 @@ onBeforeMount (() => {
 });
 onMounted(() => {
   createAdmin();
+  createCustomer();
 });
 </script>
 
