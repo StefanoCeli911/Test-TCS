@@ -16,10 +16,10 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
         return navigateTo('/login'); // Reindirizza alla pagina di login se non autenticato
     }
 
-    // Controllo del ruolo per la pagina "products"
+   /*  // Controllo del ruolo per la pagina "products"
     if (to.path === '/products' && role !== 'customer') {
         return navigateTo('/'); // Reindirizza alla home se il ruolo non è "customer"
-    }
+    } */
 
     // Controllo del ruolo per la pagina "admin"
     if (to.path === '/admin' && role !== 'admin') {

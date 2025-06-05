@@ -32,6 +32,7 @@
             <label class="block text-gray-700">Descrizione</label>
             <textarea
               v-model="newProduct.description"
+              rows="4"
               class="w-full p-2 border rounded-md"
               placeholder="Inserisci una descrizione"
               required
@@ -49,13 +50,14 @@
           </div>
   
           <div class="mb-4">
-            <label class="block text-gray-700">Immagine (URL)</label>
-            <input
-              v-model="newProduct.images[0]"
-              type="text"
+            <label class="block text-gray-700">Immagini (Puoi inserire molteplici URL usando ',' come divisore) </label>
+            <textarea
+              v-model="productImages"
+              @input="updateImagesArray"
+              rows="4"
               class="w-full p-2 border rounded-md"
               placeholder="Inserisci URL dell'immagine"
-            />
+            ></textarea>
           </div>
   
           <div class="flex justify-end space-x-4">
@@ -99,7 +101,7 @@
   const emit = defineEmits(['close']);
   
   const showSuccessDialog = ref(false);
-
+  
   const newProduct = ref({
     title: '',
     price: null,
@@ -107,6 +109,16 @@
     categoryId: null,
     images: ['']
   });
+
+  const productImages=ref('');
+
+  const updateImagesArray = () => {
+    newProduct.value.images = productImages.value
+      .split(',') 
+      .map(url => url.trim()) // Rimuove spazi vuoti
+      .filter(url => url) // Rimuove righe vuote
+  }
+
   
   const productsStore = useProductsStore(); 
   
@@ -116,6 +128,7 @@
   };
   
   const onSubmit = async () => {
+    newProduct.value.images=='' ? newProduct.value.images[0]="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1255/image-not-found.svg" :""
   try {
     await productsStore.addProduct(newProduct.value); 
     showSuccessDialog.value = true;

@@ -3,7 +3,7 @@
     <!-- Navbar -->
     <header class="sticky top-0 bg-gray-800 text-white p-4 z-20">
       <nav class="container mx-auto flex justify-between items-center">
-        <div class="text-lg font-bold"><NuxtLink to="/" class="cursor-pointer">Top Consulting & Services</NuxtLink></div>
+        <div class="text-lg font-bold"><NuxtLink to="/" class="cursor-pointer">Test</NuxtLink></div>
 
          <!-- Icona hamburger mobile -->
          <div class="lg:hidden">
@@ -48,7 +48,7 @@
     <!-- Footer -->
     <footer class="bg-gray-800 text-white p-4">
       <div class="container mx-auto text-center">
-        © Top Consulting & Services - Celi Stefano
+        Celi Stefano
       </div>
     </footer>
   </div>
